@@ -1,41 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-[#0f051d] via-[#1b0a33] to-[#120826] text-white flex flex-col">
-<div id="box" class="flex-1 p-6 overflow-y-auto"></div>
-<form id="f" class="flex p-4 gap-2">
-  <input id="m" class="flex-1 p-3 rounded-xl bg-black/40 border border-white/10 text-white">
-  <button type="submit" class="px-6 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700">Send</button>
-  <button type="button" id="leaveBtn"
-   class="bg-red-600 px-4 rounded-xl flex items-center justify-center">
-   Leave
-  </button>
+<div id="box" class="flex-1 p-3 sm:p-6 overflow-y-auto text-sm sm:text-base"></div>
+<form id="f" class="flex p-2 sm:p-4 gap-2">
+<input id="m" class="flex-1 p-3 text-base sm:text-lg rounded-xl bg-black/40 border border-white/10 text-white">
+<button class="px-6 rounded-xl bg-gradient-to-r from-purple-700 to-indigo-700">Send</button>
+<button type="button" id="leaveBtn" class="bg-red-600 px-4 rounded-xl flex items-center justify-center">Leave</button>
 </form>
-
 <script>
-const socket = io({ transports: ["websocket"] });
-const room = "{{port}}";
-const nick = "{{nick}}";
-
+const socket = io({transports:["websocket"]});
+const room="{{port}}", nick="{{nick}}";
 socket.emit("join",{room,nick});
-
-socket.on("msg",d=>{
- box.innerHTML+=`<p><b>${d.nick}:</b> ${d.msg}</p>`;
-});
-
-f.onsubmit=e=>{
- e.preventDefault();
- socket.emit("send",{room,nick,msg:m.value});
- m.value="";
-}
-
-leaveBtn.onclick=()=>{
- socket.emit("leave",{room,nick});
- window.location="/main";
-}
+socket.on("msg",d=>box.innerHTML+=`<p><b>${d.nick}:</b> ${d.msg}</p>`);
+f.onsubmit=e=>{e.preventDefault();socket.emit("send",{room,nick,msg:m.value});m.value="";}
+leaveBtn.onclick=()=>{socket.emit("leave",{room,nick});location="/main";}
 </script>
 </body>
 </html>

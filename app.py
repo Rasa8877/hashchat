@@ -8,6 +8,7 @@ import sqlite3, os
 
 app = Flask(__name__)
 app.secret_key = os.urandom(32)
+
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
 
 DB = "chat.db"
@@ -31,11 +32,10 @@ def init_db():
     con.commit()
     con.close()
 
-
 init_db()
 
 @app.before_request
-def make_session_permanent():
+def session_id():
     if "sid" not in session:
         session["sid"] = str(uuid4())
 
@@ -48,7 +48,6 @@ def index():
         return redirect("/main")
     return render_template("index.html")
 
-
 @app.route("/main")
 def main():
     if "nick" not in session:
@@ -59,7 +58,6 @@ def main():
     rooms = cur.fetchall()
     con.close()
     return render_template("main.html", rooms=rooms)
-
 
 @app.route("/create_room", methods=["POST"])
 def create_room():
@@ -74,7 +72,6 @@ def create_room():
     con.close()
     return redirect(f"/chat/{port}")
 
-
 @app.route("/join_room")
 def join_room_page():
     port = request.args.get("port")
@@ -87,24 +84,16 @@ def join_room_page():
         return "Room does not exist."
     return redirect(f"/chat/{port}")
 
-
 @app.route("/chat/<port>")
 def chat(port):
     if "nick" not in session:
         return redirect("/")
     return render_template("chat.html", port=port, nick=session["nick"])
 
-
-@app.route("/leave")
-def leave():
-    return redirect("/main")
-
-
 @socketio.on("join")
 def on_join(data):
     join_room(data["room"])
     emit("msg", {"nick":"SYSTEM","msg":f'{data["nick"]} joined.'}, room=data["room"])
-
 
 @socketio.on("send")
 def on_send(data):
@@ -113,8 +102,7 @@ def on_send(data):
 @socketio.on("leave")
 def on_leave(data):
     leave_room(data["room"])
-    emit("msg",{"nick":"SYSTEM","msg":f'{data["nick"]} left.'},room=data["room"])
-
+    emit("msg", {"nick":"SYSTEM","msg":f'{data["nick"]} left.'}, room=data["room"])
 
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=8000)
