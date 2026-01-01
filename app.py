@@ -1,5 +1,7 @@
 import eventlet
 eventlet.monkey_patch()
+
+from uuid import uuid4
 from flask import Flask, render_template, request, redirect, session
 from flask_socketio import SocketIO, join_room, leave_room, emit
 import sqlite3, os
