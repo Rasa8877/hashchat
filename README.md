@@ -28,7 +28,7 @@ HashChat allows users to choose a nickname, create private rooms, and chat insta
 
 ### 1. Clone the repository
 
-git clone https://github.com/Rasa8877/HashChat.git  
+git clone https://github.com/Rasa8877/hashchat.git  
 cd HashChat
 
 ### 2. Create virtual environment
