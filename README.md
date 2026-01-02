@@ -21,8 +21,7 @@ HashChat allows users to choose a nickname, create private rooms, and chat insta
 
 ## Entering the site
 ### Enter this URL:
-https://hashchat.up.railway.app/
-
+[HashChat](https://hashchat.onrender.com)
 ---
 
 ## Installation
